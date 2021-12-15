@@ -1,5 +1,7 @@
 package cpal
 
+import "math/rand"
+
 
 func Clone[Slice ~[]T, T any](arr Slice) Slice {
 	ret := make(Slice, len(arr))
@@ -154,4 +156,46 @@ func MapCopy[InSlice ~[]T, OutSlice ~[]R, T any, R any](in InSlice, out OutSlice
 		out[i] = f(val)
 	}
 	return out	
+}
+
+
+func CopyIf[Slice ~[]T, T any](in Slice, out Slice, f func(T) bool) Slice {
+	if out == nil {
+		out = make([]T, 0)
+	}
+	out = out[:0]
+
+	for _, val := range(in) {
+		if f(val) {
+			out = append(out, val)
+		}
+	}
+	return out	
+}
+
+
+func MapCopyIf[InSlice ~[]T, OutSlice ~[]R, T any, R any](in InSlice, out OutSlice, map_ func(T) R, if_ func(T) bool) OutSlice {
+	if out == nil {
+		out = make([]R, 0)
+	}
+	out = out[:0]
+
+	for _, val := range(in) {
+		if if_(val) {
+			out = append(out, map_(val))
+		}
+	}
+	return out	
+}
+
+func Fill[Slice ~[]T, T any](arr Slice, val func() T) {
+	for i := range(arr) {
+		arr[i] = val()
+	}
+}
+
+func Shuffle[Slice ~[]T, T any](arr Slice) {
+	for i := range(arr) {
+		Swap(&arr[i], &arr[rand.Intn(len(arr))])
+	}
 }

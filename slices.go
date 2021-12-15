@@ -118,4 +118,40 @@ func MapZipReduce[SliceA ~[]A, A any, SliceB ~[]B, B any, R any, AM any, BM any]
 	return init
 }
 
+func FindIf[Slice ~[]T, T any](arr Slice, f func(T) bool) int {
+	for i, val := range(arr) {
+		if f(val) {
+			return i
+		}
+	}
+	return -1
+}
 
+
+func Find[Slice ~[]T, T comparable](arr Slice, val T) int {
+	for i, val2 := range(arr) {
+		if val == val2 {
+			return i
+		}
+	}
+	return -1
+}
+
+func AdjecentFindIf[Slice ~[]T, T any](arr Slice, f func(T, T) bool) int {
+	for i := 1; i < len(arr); i++ {
+		if f(arr[i-1], arr[i]) {
+			return i-1
+		}
+	}
+	return -1
+}
+
+func MapCopy[InSlice ~[]T, OutSlice ~[]R, T any, R any](in InSlice, out OutSlice, f func(T) R) OutSlice {
+	if out == nil || len(out) < len(in) {
+		out = make([]R, len(in))
+	} 
+	for i, val := range(in) {
+		out[i] = f(val)
+	}
+	return out	
+}

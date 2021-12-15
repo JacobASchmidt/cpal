@@ -96,3 +96,29 @@ func StableSort[Slice ~[]T, T any](arr Slice, cmp func(T, T) bool) {
         StableSort(s[point:], cmp)        
 }
 
+func PlaceNthElement[Slice ~[]T, T any](arr Slice, i int, cmp func(T, T) bool) {
+        
+       s := []T(arr)
+
+       if len(s) <= 1 {
+               return
+       }
+
+       mid := len(s) / 2
+       last := len(s) - 1
+
+       Swap(&s[mid], &s[last])
+
+       point := Partition(s[:last], func(el T) bool {
+               return cmp(s[last], el)
+       })
+
+       Swap(&s[point], &s[last])
+       if i == point {
+               return
+       } else if i < point {
+               PlaceNthElement(s[:point], i, cmp)
+       } else {
+                PlaceNthElement(s[point+1:], i - (point + 1), cmp)
+       }
+}

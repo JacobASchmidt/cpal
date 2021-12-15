@@ -1,5 +1,6 @@
 package cpal
 
+import "constraints"
 
 func Swap[T any](a *T, b *T) {
         temp := *a
@@ -78,7 +79,7 @@ func Sort[Slice ~[]T, T any](arr Slice, cmp func(T, T) bool) {
        Sort(s[:point], cmp)
        Sort(s[point+1:], cmp)
 }
-//cmp must not be reflexive! note also already sorted array will have quadratic time complexity
+//cmp must not be reflexive! note also already sorted array will have O(n^2logn) time complexity
 func StableSort[Slice ~[]T, T any](arr Slice, cmp func(T, T) bool) {
         s := []T(arr)
         if len(s) <= 1 {
@@ -95,7 +96,7 @@ func StableSort[Slice ~[]T, T any](arr Slice, cmp func(T, T) bool) {
         StableSort(s[:point], cmp)
         StableSort(s[point:], cmp)        
 }
-
+//cmp must not be reflexive!
 func PlaceNthElement[Slice ~[]T, T any](arr Slice, i int, cmp func(T, T) bool) {
         
        s := []T(arr)
@@ -121,4 +122,71 @@ func PlaceNthElement[Slice ~[]T, T any](arr Slice, i int, cmp func(T, T) bool) {
        } else {
                 PlaceNthElement(s[point+1:], i - (point + 1), cmp)
        }
+}
+//cmp must not be reflexive! note also already sorted array will have O(n^2logn) time complexity
+func StablePlaceNthElement[Slice ~[]T, T any](arr Slice, i int, cmp func(T, T) bool) {
+        s := []T(arr)
+
+       if len(s) <= 1 {
+               return
+       }
+
+
+       point := Partition(s, func(el T) bool {
+               return cmp(el, s[0])
+       })
+       if point == 0 {
+               point++
+       }
+
+       if i == point {
+               return
+       } else if i < point {
+               PlaceNthElement(s[:point], i, cmp)
+       } else {
+                PlaceNthElement(s[point+1:], i - (point + 1), cmp)
+       }
+}
+
+func PartitionPoint[Slice ~[]T, T any](arr Slice, f func(T) bool) int {
+        s := []T(arr)
+
+        if len(s) <= 1 {
+                if len(s) == 0 {
+                        return 0
+                }
+                if f(s[0]) {
+                        return 1
+                } else {
+                        return 0
+                }
+        }
+
+        mid := len(arr) / 2
+        if f(s[mid]) {
+                return mid + 1 + PartitionPoint(s[mid+1:], f)
+        } else {
+                return PartitionPoint(s[:mid], f)
+        }
+}
+
+
+func Equal[T comparable](a T, b T) bool {
+        return a == b
+}
+
+func NotEqual[T comparable](a T, b T) bool {
+        return a != b
+}
+func Less[T constraints.Ordered](a T, b T) bool {
+        return a < b
+}
+func LessEq[T constraints.Ordered](a T, b T) bool {
+        return a <= b
+}
+func Greater[T constraints.Ordered](a T, b T) bool {
+        return a > b
+}
+func GreaterEq[T constraints.Ordered](a T, b T) bool {
+        return a >= b
 }

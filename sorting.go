@@ -1,7 +1,5 @@
 package cpal
 
-import "constraints"
-
 func Swap[T any](a *T, b *T) {
         temp := *a
         *a = *b
@@ -170,23 +168,18 @@ func PartitionPoint[Slice ~[]T, T any](arr Slice, f func(T) bool) int {
         }
 }
 
-
-func Equal[T comparable](a T, b T) bool {
-        return a == b
-}
-
-func NotEqual[T comparable](a T, b T) bool {
-        return a != b
-}
-func Less[T constraints.Ordered](a T, b T) bool {
-        return a < b
-}
-func LessEq[T constraints.Ordered](a T, b T) bool {
-        return a <= b
-}
-func Greater[T constraints.Ordered](a T, b T) bool {
-        return a > b
-}
-func GreaterEq[T constraints.Ordered](a T, b T) bool {
-        return a >= b
+func IsPartitioned[Slice ~[]T, T any](arr Slice, f func(T) bool) bool {
+        var idx int
+        for i := range(arr) {
+                if !f(arr[i]) {
+                        idx = i
+                        break
+                }
+        }
+        for ; idx < len(arr); idx++ {
+                if f(arr[idx]) {
+                        return false
+                }
+        }
+        return true
 }

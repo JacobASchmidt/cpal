@@ -188,9 +188,9 @@ func MapCopyIf[InSlice ~[]T, OutSlice ~[]R, T any, R any](in InSlice, out OutSli
 	return out	
 }
 
-func Fill[Slice ~[]T, T any](arr Slice, val func() T) {
+func Fill[Slice ~[]T, T any](arr Slice, f func() T) {
 	for i := range(arr) {
-		arr[i] = val()
+		arr[i] = f()
 	}
 }
 

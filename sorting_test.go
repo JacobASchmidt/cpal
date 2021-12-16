@@ -3,14 +3,14 @@ package cpal_test
 import (
 	"fmt"
 	"math/rand"
+	"sort"
 	"testing"
 
 	"github.com/JacobASchmidt/cpal"
 )
 
-
 func FuzzReverse(f *testing.F) {
-	for _, arr := range([][]byte{{}, {0, 4, 2}, {1, 7, 3, 2, 5}}) {
+	for _, arr := range [][]byte{{}, {0, 4, 2}, {1, 7, 3, 2, 5}} {
 		f.Add(arr)
 	}
 
@@ -26,10 +26,10 @@ func FuzzReverse(f *testing.F) {
 }
 
 func FuzzPartition(f *testing.F) {
-	for _, arr := range([][]byte{{1}, {0, 4, 2}, {1, 7, 3, 2, 5}}) {
+	for _, arr := range [][]byte{{1}, {0, 4, 2}, {1, 7, 3, 2, 5}} {
 		f.Add(arr, arr[len(arr)/2])
 	}
-	f.Fuzz(func (t *testing.T, s []byte, i byte) {
+	f.Fuzz(func(t *testing.T, s []byte, i byte) {
 		fmt.Println(s, i)
 		cmp := cpal.LessThan(i)
 		point := cpal.Partition(s, cmp)
@@ -49,7 +49,7 @@ func TestParition(t *testing.T) {
 		const arr_len = 100
 		const max_val = n
 		r := rand.New(rand.NewSource(1))
-	
+
 		for len_ := 0; len_ < arr_len; len_++ {
 			for i := 0; i < n; i++ {
 				s := make([]int, len_)
@@ -84,4 +84,36 @@ func TestParition(t *testing.T) {
 			t.Fatalf("partition of all false should be 0, slice=%v, partition point=%v", s, i)
 		}
 	})
+}
+
+func BenchmarkSort(b *testing.B) {
+	const n = 100_000
+
+	s := make([]int, n)
+	cpal.Fill(s, func() int {
+		return rand.Intn(n)
+	})
+	sortInts := cpal.Clone(s)
+	sortSlice := cpal.Clone(s)
+	cpalSort := cpal.Clone(s)
+
+	b.Run("sort.Ints", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			sort.Ints(sortInts)
+		}
+	})
+	b.Run("sort.Slice", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			sort.Slice(sortSlice, func(i, j int) bool {
+				return sortSlice[i] < sortSlice[j]
+			})
+		}
+	})
+
+	b.Run("cpal.Sort", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			cpal.Sort(cpalSort, cpal.Less[int])
+		}
+	})
+
 }

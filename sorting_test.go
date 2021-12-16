@@ -73,7 +73,7 @@ func TestParition(t *testing.T) {
 		const len_ = 1000
 		const n = 42
 		s := make([]int, len_)
-		cpal.Fill(s, cpal.ValueFunc(n))
+		cpal.Fill(s, cpal.Value(n))
 
 		i := cpal.Partition(s, cpal.EqualTo(n))
 		if i != len_ {

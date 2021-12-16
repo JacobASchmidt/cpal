@@ -68,7 +68,7 @@ func Max[T constraints.Ordered](a T, b T) T {
 }
 
 
-func ValueFunc[T any](t T) func() T {
+func Value[T any](t T) func() T {
 	return func() T {
 		return t
 	}

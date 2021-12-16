@@ -169,7 +169,7 @@ func PartitionPoint[Slice ~[]T, T any](arr Slice, f func(T) bool) int {
 }
 
 func IsPartitioned[Slice ~[]T, T any](arr Slice, f func(T) bool) bool {
-        var idx int
+        idx := len(arr)
         for i := range(arr) {
                 if !f(arr[i]) {
                         idx = i
